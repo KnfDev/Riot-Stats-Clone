@@ -1,5 +1,86 @@
 .App {
+  color: aliceblue;
+  margin-bottom: 10px;
   text-align: center;
+}
+
+body {
+  background-image: url("../Images/c-o-esports-worlds2017-art-2\ -\ Copy.png");
+}
+
+
+.searchDiv{
+  margin-bottom: 20px;
+}
+
+.matchBox{
+  padding: 5px 20px;
+  color: rgba(240, 248, 255, 0.614);
+  margin: 0px 20%;
+  background-color: #282c34de;
+}
+
+
+
+img {
+  color: transparent;
+  }
+
+.victory {
+  color: lightblue;
+}
+
+.defeat {
+  color: red
+}
+
+.profileBox {
+  color: aliceblue;
+  background-color: #282c34db;
+  padding: 10px;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 2px solid black;
+}
+
+.playerBox{
+  padding: 10px;
+  padding: 10px;
+  display:flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.summonerBox{
+  text-align: center;
+}
+
+.itemBox{
+  display: flex;
+}
+
+
+.itemImg{
+  height: 50px;
+}
+
+.sumName {
+  color:white;
+  margin-right: 15px;
+}
+
+.deaths {
+  color: red;
+}
+
+.profileIcon {
+  height: 75px;
+  border-radius: 50px;
+}
+.champIcon {
+  height: 75px;
+  margin-right: 10px;
 }
 
 .App-logo {
