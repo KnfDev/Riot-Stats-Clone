@@ -6,6 +6,7 @@
 
 body {
   background-image: url("../Images/c-o-esports-worlds2017-art-2\ -\ Copy.png");
+  background-size: 100%;
 }
 
 
@@ -16,11 +17,21 @@ body {
 .matchBox{
   padding: 5px 20px;
   color: rgba(240, 248, 255, 0.614);
-  margin: 0px 20%;
+  margin: 0px 10%;
   background-color: #282c34de;
 }
 
+.champbox{
+  display:flex;
+  width: 10%;
+  justify-content: center;
+}
 
+.kda {
+  width: 30%;
+  text-align: center;
+  justify-content: center;
+}
 
 img {
   color: transparent;
@@ -50,6 +61,7 @@ img {
   display:flex;
   align-items: center;
   justify-content: space-between;
+  text-align: center;
 }
 
 .summonerBox{
@@ -58,6 +70,8 @@ img {
 
 .itemBox{
   display: flex;
+  width: 30%;
+  justify-content: right;
 }
 
 
@@ -66,8 +80,10 @@ img {
 }
 
 .sumName {
+  display: flex;
+  text-align: left;
   color:white;
-  margin-right: 15px;
+  width: 20%;
 }
 
 .deaths {
@@ -79,8 +95,16 @@ img {
   border-radius: 50px;
 }
 .champIcon {
-  height: 75px;
-  margin-right: 10px;
+  max-width:100%;
+}
+/* 
+.bansIcon {
+  max-width: 25px;
+} */
+
+.bans img {
+  max-width: 7.5%;
+  margin:0 5px 0 5px;
 }
 
 .App-logo {

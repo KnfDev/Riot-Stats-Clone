@@ -5,31 +5,23 @@ function App() {
   const [player, setPlayer] = useState("");
   const [summonerData, setSummonerData] = useState({});
   const [matchList, setMatchList] = useState([]);
-  const [champions, setChampions] = useState({})
-  useEffect(loadChampions, [])
-  function loadChampions(){
+  const [champions, setChampions] = useState({});
+
+  useEffect(loadChampions, []);
+  function loadChampions() {
     axios
-    .get(
-      "http://ddragon.leagueoflegends.com/cdn/12.19.1/data/en_US/champion.json"
-    )
-    .then((response) => setChampions(response.data.data))
-    .catch(function (error) {
-      console.log(error);
-    });
+      .get(
+        "http://ddragon.leagueoflegends.com/cdn/12.19.1/data/en_US/champion.json"
+      )
+      .then((response) => setChampions(response.data.data))
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
-  if(champions === {}){
-    return "loading..."
-  }
-  function getChampionById(id){
-    for(const champion in champions){
-      if(champions[champion].key==id){
-        return champions[champion].name
-      }
-    }
-  }
+  let championNameKeys = Object.values(champions);
 
-  console.log('gittest')
+  // console.log("matchinfo", matchList);
 
   function getMatches(event) {
     event.preventDefault();
@@ -51,122 +43,160 @@ function App() {
     return "loading..";
   }
 
-  
   const matchInfo = matchList.map((matchData, index) => {
-    const team1data = matchData.info.teams.slice(0, 1).map((data) => {
-      return data;
+    // const team1data = matchData.teams.slice(0, 1).map((data) => {
+    //   return data;
+    // });
+    // championNameKeys = array of objects of key value pairs
+    // championNameKeys.key=#
+    // championNameKeys.id=champion name
+    const team1data = matchData.teams[0];
+    console.log('team1data',team1data)
+    const team2data = matchData.teams[1]
+
+    const team1BannedChampions = team1data?.bans.map((ban) => {
+      console.log("bans", ban.championId);
+      const champion = championNameKeys.find(
+        (champion) =>
+          Number(champion.key) === Number(ban.championId) &&
+          ban.championId !== Number(-1)
+      );
+      if (champion?.id === undefined) {
+        return null;
+      } else {
+        return (
+          <img
+          className="champIcon"
+          src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/${champion?.id}.png`}
+          alt=""
+        />
+        )
+      }
+    });
+    const team2BannedChampions = team2data?.bans.map((ban) => {
+      console.log("bans", ban.championId);
+      const champion = championNameKeys.find(
+        (champion) =>
+          Number(champion.key) === Number(ban.championId) &&
+          ban.championId !== Number(-1)
+      );
+      if (champion?.id === undefined) {
+        return null;
+      } else {
+        return (
+          <img
+          className="banIcon"
+          src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/${champion?.id}.png`}
+          alt=""
+        />
+        )
+      }
     });
 
-    //NEED TO IMPLEMENT BANS SOMEHOW
 
-    const team2data = matchData.info.teams.slice(-1).map((data) => {
-      return data;
-    });
 
-    const team1result = team1data.map((data) =>
-      data.win === true ? "true" : "false"
-    );
-    const team2result = team2data.map((data) =>
-      data.win === true ? "true" : "false"
-    );
 
-    const team1kills = team1data.map((data) => data.objectives.champion.kills);
-    const team2kills = team2data.map((data) => data.objectives.champion.kills);
-  
+    const team1kills = team1data.objectives.champion.kills
+    const team2kills = team2data.objectives.champion.kills
+
     return (
       <div key={index}>
         <p>
           Blue Team :{" "}
-          {team1result.includes("true") ? (
+          {team1data.win === true ? (
             <span className="victory">Victory</span>
           ) : (
             <span className="defeat">Defeat</span>
           )}
         </p>
         <p>Total Kills: {team1kills}</p>
-        {matchData.info.gameMode === "ARAM" ? 
-        null : 
-        <div>
-        <p>Bans:</p>
-        {/* <img src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/${team1BannedChamps[0]}.png`} alt=""/>
-        <img src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/${team1BannedChamps[1]}.png`} alt=""/>
-        <img src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/${team1BannedChamps[2]}.png`} alt=""/>
-        <img src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/${team1BannedChamps[3]}.png`} alt=""/>
-        <img src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/${team1BannedChamps[4]}.png`} alt=""/> */}
-        </div>}   
-        {matchData.info.participants
-          .slice(0, 5)
-          .map((data, participantIndex) => {
-            return (
-              <div key={participantIndex} className="playerBox">
+        {matchData.gameMode === "ARAM" ? null : (
+          <div className="bans">
+            <p>Bans:</p>
+            {team1BannedChampions}
+          </div>
+        )}
+        {matchData.participants.slice(0, 5).map((data, participantIndex) => {
+          return (
+            <div key={participantIndex} className="playerBox">
+              <div className="champbox">
+              <img
+                className="champIcon"
+                src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/${data.championName}.png`}
+                alt=""
+              />
+              </div>
+              <div className="sumName">{data.summonerName}</div>
+              <div className="kda">
+                {data.kills}/<span className="deaths">{data.deaths}</span>/
+                {data.assists}
+              </div>
+              <span className="itemBox">
                 <img
-                  className="champIcon"
-                  src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/${data.championName}.png`}
+                  className="itemImg"
+                  src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/item/${data.item0}.png`}
                   alt=""
                 />
-                <span className="sumName">{data.summonerName}</span>
-                <span>
-                  {data.kills}/<span className="deaths">{data.deaths}</span>/
-                  {data.assists}
-                </span>
-                <span className="itemBox">
-                  <img
-                    className="itemImg"
-                    src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/item/${data.item0}.png`}
-                    alt=""
-                  />
-                  <img
-                    className="itemImg"
-                    src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/item/${data.item1}.png`}
-                    alt=""
-                  />
-                  <img
-                    className="itemImg"
-                    src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/item/${data.item2}.png`}
-                    alt=""
-                  />
-                  <img
-                    className="itemImg"
-                    src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/item/${data.item3}.png`}
-                    alt=""
-                  />
-                  <img
-                    className="itemImg"
-                    src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/item/${data.item4}.png`}
-                    alt=""
-                  />
-                  <img
-                    className="itemImg"
-                    src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/item/${data.item5}.png`}
-                    alt=""
-                  />
-                </span>
-              </div>
-            );
-          })}
+                <img
+                  className="itemImg"
+                  src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/item/${data.item1}.png`}
+                  alt=""
+                />
+                <img
+                  className="itemImg"
+                  src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/item/${data.item2}.png`}
+                  alt=""
+                />
+                <img
+                  className="itemImg"
+                  src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/item/${data.item3}.png`}
+                  alt=""
+                />
+                <img
+                  className="itemImg"
+                  src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/item/${data.item4}.png`}
+                  alt=""
+                />
+                <img
+                  className="itemImg"
+                  src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/item/${data.item5}.png`}
+                  alt=""
+                />
+              </span>
+            </div>
+          );
+        })}
         <hr />
         <p>
           Red Team :{" "}
-          {team2result.includes("true") ? (
+          {team2data.win === true ? (
             <span className="victory">Victory</span>
           ) : (
             <span className="defeat">Defeat</span>
           )}
         </p>
         <p>Total Kills: {team2kills}</p>
-        {matchData.info.participants.slice(-5).map((data, participantIndex) => {
+        {matchData.gameMode === "ARAM" ? null : (
+          <div className="bans">
+            <p>Bans:</p>
+            {team2BannedChampions}
+          </div>
+        )}
+        {matchData.participants.slice(-5).map((data, participantIndex) => {
           return (
             <div key={participantIndex} className="playerBox">
+              <div className="champbox">
               <img
                 className="champIcon"
                 src={`http://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/${data.championName}.png`}
                 alt=""
-              />
-              <span className="sumName">{data.summonerName}</span>
-              <span>
+                />
+                </div>
+              <div className="sumName">{data.summonerName}</div>
+              <div className="kda">
                 {data.kills}/<span className="deaths">{data.deaths}</span>/
                 {data.assists}
-              </span>
+              </div>
               <span className="itemBox">
                 <img
                   className="itemImg"
