@@ -5,7 +5,7 @@ const app = express();
 
 app.use(cors());
 
-const API_KEY = "RGAPI-0952d4c1-3867-4de9-b79e-71a3af944b9c"; // update riot api key here
+const API_KEY = process.env.API_KEY; // update riot api key here
 const BASE_URL = "https://na1.api.riotgames.com";
 const SUMM_URL = "/lol/summoner/v4/summoners/by-name/";
 const API_CALL = "https://americas.api.riotgames.com";
